@@ -7,13 +7,13 @@ import utils.ProfileUtils._
 
 /*
 Usage:
-spark-submit --class 'test.ProcessFile' --master spark://localhost:7077  target/scala-2.10/opr-spark_2.10-1.0.jar    <file to process>
+    $ spark-submit --class 'test.ProcessFile' --master spark://localhost:7077  target/scala-2.10/simple-project_2.10-1.0.jar    <file to process>
 
     file to process can be :  /etc/hosts   or   scripts/1M.data  ....
 
 e.g:
 - with 4G executor memory and turning off verbose logging
-    spark-submit --class test.ProcessFile  --master spark://localhost:7077 --executor-memory 4g   --driver-class-path logging/  target/scala-2.10/opr-spark_2.10-1.0.jar   s3n://opr-spark/1M.data
+    $  spark-submit --class test.ProcessFile  --master spark://localhost:7077 --executor-memory 4g   --driver-class-path logging/  target/scala-2.10/simple-project_2.10-1.0.jar   s3n://bucket/file
 
 */
 object ProcessFile {

@@ -3,15 +3,12 @@ svcodecamp-2014
 
 Materials for Silicon Valley Code Camp 2014
 
+I did two sessions :
+1)  A talk on 'how to launch your career in Big Data'
+  slides are available in 'presentations' folder
 
-Dev environment setup
-------
-* install JDK 7
+2) Spark workshop
+  slides are available in 'presentations' folder
+  see spark.txt  for more details
 
-* install sbt (http://www.scala-sbt.org/)
-  if using brew on mac
-    $ brew install sbt
 
-* install Scala (http://www.scala-lang.org/)
-
-* get Spark from http://spark.apache.org/

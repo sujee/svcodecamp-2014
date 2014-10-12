@@ -1,0 +1,121 @@
+Spark Workshop @ SV Code Camp 2014
+===
+
+Dev environment setup
+------
+* JDK 7
+
+* sbt (http://www.scala-sbt.org/)
+  if using brew on mac
+    $ brew install sbt
+
+* Scala (http://www.scala-lang.org/)
+  if using brew on mac
+    $ brew install scala
+
+* Spark (http://spark.apache.org/)
+  get binary distribution (latest 1.1 as of now)
+
+
+Project info:
+-----
+  - scripts : contains scripts to generate data
+  - src : where src files are
+  - to build the project
+      $ sbt package
+  - resulting jar file will be under 'target/scala-2.10' dir
+
+
+Quick Start
+----
+
+== Step 1) Running Spark
+  unpack spark distribution
+  e.g.
+    $   tar xvf spark-1.1.hadoop2.4.tgz
+    $   cd spark-1.1.0-bin-hadoop2.4   # spark install dir
+    $   sbin/start-all.sh
+
+spark should be running now
+Use 'jps' command to verify
+    $   jps
+
+Also check the spark UI @   http://localhost:8080
+
+
+== Step 2)  prepare data files
+switch to  project dir (where this file is)
+  $  cd scripts
+  $  ./create-data-file.sh
+This script will create data files of varying sizes (1M, 10M, 100M, 500M and 1G).  We will use these data files to test spark
+
+
+== Step 3)  Running Spark shell
+    $    /spark_install_dir/bin/spark-shell  --master   master_url  --executor-memory  2G
+
+copy the master-url from Spark UI, it will be spark://....
+if every thing goes well we will see the prompt in spark shell
+    scala >
+
+
+== Step 4 ) executing instructions in Spark shell
+    >  val f100m = sc.textFile("scripts/100M.data")
+    >  f100m.count()
+
+inspect the console output.
+Notice to time took.
+Inspect the UI for Spark-shell application  (understand stages, tasks, partitions)
+
+Filter:
+    >   f100m.filter(line => line.contains("diamond")).count()
+
+
+Word count (mapreduce)
+    > var counts = f100m.flatMap(line => line.split(" ")).map(word => (word, 1)).reduceByKey(_ + _)
+
+    >  counts
+
+Did spark execute the word-count?
+Force it with an action
+    > counts.collect()
+
+
+== Step 5)  Caching
+Load the 1G file we genereated
+    > val f1g = sc.textFile("scripts/1G.data")
+
+    > f1g.count()
+    > f1g.count()
+note the times
+
+cache it
+    >  f1g.cache()
+note the time
+
+count again
+    > f1g.count()
+note the time, can you explain it?
+
+count again
+    > f1g.count()
+    > f1g.count()
+note the times!
+
+
+== Step 6) Writing Scala code
+Inspect file : src/main/scala/test/ProcessFile.scala
+This file takes  a file location and does count() before and after caching.
+
+compile the package
+    $  sbt package
+
+Submit to spark like this:
+    $ spark-submit --class 'test.ProcessFile' --master spark://localhost:7077  --executor-memory 4g   --driver-class-path logging/   target/scala-2.10/simple-project_2.10-1.0.jar   <file to process>
+
+Parameters explained:
+  - class : class to process
+  - master : spark master uri
+  - executor-memory  : how much memory to use
+  - driver-class-path : this to mute Spark's logging, so we can see our output
+  - then the jar file
+  - and any arguments to the class, in this case a file-name
